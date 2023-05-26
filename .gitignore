@@ -1,9 +1,10 @@
+# Reference https://github.com/github/gitignore/blob/master/Go.gitignore
 # Binaries for programs and plugins
 *.exe
 *.exe~
 *.dll
-*.so
 *.dylib
+
 
 # Test binary, built with `go test -c`
 *.test
@@ -12,4 +13,32 @@
 *.out
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
+vendor/
+
+# Go workspace file
+go.work
+go.sum
+logs/
+
+# Compiled Object files, Static and Dynamic libs (Shared Objects)
+*.o
+*.a
+*.so
+
+# OS General
+Thumbs.db
+.DS_Store
+
+# project
+*.cert
+*.key
+*.log
+bin/
+
+# Develop tools
+.vscode/
+.idea/
+*.swp
+build/cache
+cmd/sql-generate/tem.go
+configs/config_local.yaml

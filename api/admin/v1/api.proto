@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package api.admin.v1;
+
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+
+option go_package = "go-leaf/api/admin/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.admin.v1";
+
+service App {
+  rpc Login(loginReq) returns (LoginResp) {
+    option (google.api.http) = {
+      get: "/v1/login"
+    };
+  };
+
+  rpc Category(CategoryReq) returns (CategoryResp) {
+    option (google.api.http) = {
+      get: "/v1/category"
+    };
+  };
+
+  rpc GetHost(GetHostReq) returns (GetHostResp) {
+    option (google.api.http) = {
+      get: "/v1/get_host"
+    };
+  };
+}
+
+message loginReq {
+  string user_name = 1 [(validate.rules).string = {min_len:1}];
+  string password  = 2 [(validate.rules).string = {min_len:1}];
+}
+
+message  LoginResp {
+  uint32 code = 1;
+  string message = 2;
+}
+
+message CategoryReq {
+}
+
+message CategoryResp {
+  uint32 code = 1;
+  string message = 2;
+  Category data = 3;
+}
+
+message Category {
+  int64 id       = 1;
+  string name    = 2;
+  string path    = 3;
+  bool   display = 4;
+  repeated Category child = 5;
+}
+
+message GetHostReq {
+
+}
+
+message GetHostResp {
+  uint32 code = 1;
+  string message = 2;
+  HostData data = 3;
+}
+message HostData {
+  string name   = 1;
+  string ip     = 2;
+  string status = 3;
+}

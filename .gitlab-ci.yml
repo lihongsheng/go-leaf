@@ -1,0 +1,35 @@
+image: golang:1.18.10
+
+before_script:
+  - echo "before_script"
+  - go version
+  - go env -w GO111MODULE=on
+  - go env -w GOPROXY="https://goproxy.io,direct"
+#使用 stages 来定义包含作业组的阶段。stages 是为流水线全局定义的。在作业中使用 stage 来定义作业属于哪个阶段
+stages:
+  - build
+  - test
+  - deploy
+
+format:
+  stage: test
+  script:
+    #- go fmt $(go list ./...)
+    #- go vet $(go list ./...)
+    - go test -v $(go list ./internal/...)
+compile:
+  stage: build
+  script:
+    - echo "构建"
+    - go mod tidy
+    - go build -o bin/rpc cmd/rpc/main.go cmd/rpc/wire_gen.go
+    #- go build -o bin/web cmd/api/main.go
+    #- go build -o bin/cron cmd/cron/main.go
+  artifacts:
+    paths:
+      - cmd
+
+deploy-dev:
+  stage: deploy
+  script:
+    - echo "deploy dev environment"

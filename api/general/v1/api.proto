@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package api.general.v1;
+
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+
+option go_package = "go-leaf/api/general/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.general.v1";
+
+service App {
+  rpc General(GeneralReq) returns (GeneralResp) {
+    option (google.api.http) = {
+      get: "/v1/general"
+    };
+  };
+
+  rpc Parse(ParseReq) returns (ParseResp) {
+    option (google.api.http) = {
+      get: "/v1/parse"
+    };
+  };
+}
+
+message GeneralReq {
+}
+
+message ParseReq {
+  int64 general_id = 1 [(validate.rules).int64 = {gte: 1}];
+}
+
+message ParseResp {
+  uint32 code = 1;
+  string message = 2;
+  InfoData data = 3;
+}
+
+message GeneralResp {
+  uint32 code = 1;
+  string message = 2;
+  InfoData data = 3;
+}
+
+message InfoData {
+  int64 general_id = 1;
+  int64 work_id    = 2;
+  int64 time       = 3;
+  int64 auto_id    = 4;
+}
