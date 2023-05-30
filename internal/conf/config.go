@@ -12,11 +12,27 @@ type Conf struct {
 	// etcd的地址
 	Etcd string `json:"etcd"`
 	// 是否强依赖时钟
-	TimeSwitch bool   `json:"time_switch"`
-	Server     Server `json:"server"`
-	JaegerUrl  string `json:"jaeger_url"`
-	Env        string `json:"env"`
-	Log        Log    `json:"log"`
+	Server    Server    `json:"server"`
+	JaegerUrl string    `json:"jaeger_url"`
+	Env       string    `json:"env"`
+	Log       Log       `json:"log"`
+	Snowflake Snowflake `json:"snowflake"`
+}
+
+type Snowflake struct {
+	// # 模式1 正常模式：时钟回退会报错，
+	// 模式2：等待模式，时钟回退切小于多少毫秒内会等待。
+	// 模式3：自动切换模式
+	//      当时钟回退：
+	//         1. 记录当前回退的时间 back_time
+	//         2. 让当前计数器继续保持递增 current_time + (back_time-back_time) + sqp++
+	//         3. 当时间正常的时候,大于等于 current_time的时候 使用正常时间【对与系统负载较大的时候，时间有可能永远回归不了正常】
+	Mode     string         `json:"mode"`
+	WaitTime types.Duration `json:"wait_time"`
+	// 数据中心标志位的长度
+	DataLen int `json:"data_len"`
+	// 步长标志位的长度
+	SqpLen int `json:"sqp_len"`
 }
 
 type Server struct {
