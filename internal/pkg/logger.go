@@ -7,11 +7,11 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"go-leaf/internal/conf"
+	"go-leaf/internal/types"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"message-center/internal/conf"
-	"message-center/internal/types"
 	"os"
 	"time"
 )

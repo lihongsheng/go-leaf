@@ -17,6 +17,7 @@ type Conf struct {
 	Env       string    `json:"env"`
 	Log       Log       `json:"log"`
 	Snowflake Snowflake `json:"snowflake"`
+	Pprof     string    `json:"pprof"`
 }
 
 type Snowflake struct {
@@ -33,6 +34,8 @@ type Snowflake struct {
 	DataLen int `json:"data_len"`
 	// 步长标志位的长度
 	SqpLen int `json:"sqp_len"`
+	// 开始时间微妙数
+	StartTime int64 `json:"start_time"`
 }
 
 type Server struct {

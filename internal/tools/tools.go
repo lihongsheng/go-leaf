@@ -1,16 +1,13 @@
 package tools
 
 import (
-	"bytes"
 	"context"
 	"crypto/md5"
+	"errors"
 	"fmt"
-	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
-	"html/template"
 	"io"
-	apiError "message-center/api/error"
 	"net/url"
 	"reflect"
 	"regexp"
@@ -62,7 +59,7 @@ func Lock(ctx context.Context, key string, lockTime time.Duration, redis *redis.
 	val := strconv.FormatInt(value, 10)
 	stm, err := redis.SetNX(ctx, key, val, lockTime).Result()
 	if err != nil {
-		return false, nil, apiError.ErrorClientRedisSetError("set redis lock error %v", err)
+		return false, nil, errors.New(fmt.Sprintf("set redis lock error %v", err))
 	}
 	if stm == false {
 		return false, nil, nil
@@ -85,20 +82,6 @@ func Md5(content string) (md string) {
 	_, _ = io.WriteString(h, content)
 	md = fmt.Sprintf("%x", h.Sum(nil))
 	return
-}
-
-func TemplateParse(v interface{}, content string) (string, error) {
-	t := template.New("tem")
-	tpl, err := t.Parse(content)
-	if err != nil {
-		return "", apiError.ErrorSystemTemplateParseError("模板解析失败 %s, Template%s", err, "content")
-	}
-	byteStr := bytes.NewBufferString("")
-	err = tpl.Execute(byteStr, v)
-	if err != nil {
-		return "", apiError.ErrorSystemTemplateParseError("模板解析失败 %s, var%s , Template%s", err, v, "content")
-	}
-	return byteStr.String(), nil
 }
 
 func VerifyMobileFormat(mobileNum string) bool {
@@ -126,14 +109,15 @@ func GenerateID() string {
 	return uuid.New().String()
 }
 
-func GetReason(err error) string {
-	reason := ""
-	if err != nil {
-		if e, ok := err.(*errors.Error); ok {
-			reason = e.Reason
-		} else {
-			reason = apiError.ErrorReason_SYSTEM_UNKNOWN_ERROR.String()
-		}
-	}
-	return reason
-}
+//
+//func GetReason(err error) string {
+//	reason := ""
+//	if err != nil {
+//		if e, ok := err.(*errors.Error); ok {
+//			reason = e.Reason
+//		} else {
+//			reason = apiError.ErrorReason_SYSTEM_UNKNOWN_ERROR.String()
+//		}
+//	}
+//	return reason
+//}

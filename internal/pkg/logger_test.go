@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
-	"message-center/internal/conf"
-	"message-center/internal/types"
+	"go-leaf/internal/conf"
+	"go-leaf/internal/types"
 	"testing"
 	"time"
 )

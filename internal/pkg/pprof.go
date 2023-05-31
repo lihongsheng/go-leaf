@@ -5,8 +5,8 @@ import (
 	"errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"message-center/internal/conf"
-	"message-center/internal/types"
+	"go-leaf/internal/conf"
+	"go-leaf/internal/types"
 	"net"
 	"net/http"
 	"net/http/pprof"
@@ -15,11 +15,11 @@ import (
 
 type Pprof struct {
 	http   *http.Server
-	config conf.Bootstrap
+	config conf.Conf
 	log    log.Logger
 }
 
-func NewPprof(c conf.Bootstrap, log log.Logger) *Pprof {
+func NewPprof(c conf.Conf, log log.Logger) *Pprof {
 	return &Pprof{
 		config: c,
 		log:    log,
