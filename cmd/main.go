@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"flag"
-	"fmt"
+	"github.com/go-kratos/kratos/contrib/registry/etcd/v2"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
@@ -18,6 +18,7 @@ import (
 	"go-leaf/internal/pkg"
 	"go-leaf/internal/tools"
 	"go-leaf/internal/types"
+	clientv3 "go.etcd.io/etcd/client/v3"
 	_ "go.uber.org/automaxprocs"
 	"google.golang.org/protobuf/encoding/protojson"
 	"os"
@@ -28,7 +29,7 @@ import (
 var (
 	// flagconf is the config flag.
 	flagconf string
-	id, _    = os.Hostname()
+	id       = os.Getenv("HOSTNAME")
 	env      string
 	podName  string
 )
@@ -75,11 +76,7 @@ func main() {
 	if err := c.Scan(&bc); err != nil {
 		panic(err)
 	}
-	fmt.Println(fmt.Sprintf("%+v", bc))
-	podName = os.Getenv("HOSTNAME")
-	if podName == "" {
-		podName = bc.Server.Name + "-" + tools.GenerateID()
-	}
+
 	bc.Env = env
 	bc.Log.Path += podName + ".log"
 	// 使用zap log
@@ -97,7 +94,7 @@ func main() {
 	_ = tools.InitJaeger(bc.JaegerUrl, bc.Server.Name)
 	// 新建一个 WithCancel ,告知 Prometheus 结束退出协程
 	pkg.ProviderHTTPPrometheus(context.Background(), "go-leaf", "leaf")
-	app, cleanup, err := WireApp(bc.Server, bc.Data, bc.Secret, bc, logger)
+	app, cleanup, err := WireApp(bc.Server, bc, logger)
 	defer func() {
 		if cleanup != nil {
 			cleanup()
@@ -114,11 +111,21 @@ func main() {
 	}
 }
 
-func NewApp(logger log.Logger, gs *grpc.Server, hs *http.Server, c conf.Server, pprof *pkg.Pprof) *kratos.App {
+func NewApp(logger log.Logger, gs *grpc.Server, hs *http.Server, c conf.Conf, pprof *pkg.Pprof) *kratos.App {
+	// new etcd client
+	client, err := clientv3.New(clientv3.Config{
+		Endpoints: c.EtcdAdds,
+	})
+	if err != nil {
+		panic(err)
+	}
+	// new reg with etcd client
+	reg := etcd.New(client)
+
 	return kratos.New(
-		kratos.ID(""),
-		kratos.Name(c.Name),
-		kratos.Version(c.Version),
+		kratos.ID(id),
+		kratos.Name(c.Server.Name),
+		kratos.Version(c.Server.Version),
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(logger),
 		kratos.Server(
@@ -126,5 +133,6 @@ func NewApp(logger log.Logger, gs *grpc.Server, hs *http.Server, c conf.Server, 
 			hs,
 			pprof,
 		),
+		kratos.Registrar(reg),
 	)
 }

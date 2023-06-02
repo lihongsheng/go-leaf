@@ -19,126 +19,126 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	App_General_FullMethodName = "/api.general.v1.App/General"
-	App_Parse_FullMethodName   = "/api.general.v1.App/Parse"
+	General_General_FullMethodName = "/api.general.v1.General/General"
+	General_Parse_FullMethodName   = "/api.general.v1.General/Parse"
 )
 
-// AppClient is the client API for App service.
+// GeneralClient is the client API for General service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type AppClient interface {
+type GeneralClient interface {
 	General(ctx context.Context, in *GeneralReq, opts ...grpc.CallOption) (*GeneralResp, error)
 	Parse(ctx context.Context, in *ParseReq, opts ...grpc.CallOption) (*ParseResp, error)
 }
 
-type appClient struct {
+type generalClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewAppClient(cc grpc.ClientConnInterface) AppClient {
-	return &appClient{cc}
+func NewGeneralClient(cc grpc.ClientConnInterface) GeneralClient {
+	return &generalClient{cc}
 }
 
-func (c *appClient) General(ctx context.Context, in *GeneralReq, opts ...grpc.CallOption) (*GeneralResp, error) {
+func (c *generalClient) General(ctx context.Context, in *GeneralReq, opts ...grpc.CallOption) (*GeneralResp, error) {
 	out := new(GeneralResp)
-	err := c.cc.Invoke(ctx, App_General_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, General_General_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *appClient) Parse(ctx context.Context, in *ParseReq, opts ...grpc.CallOption) (*ParseResp, error) {
+func (c *generalClient) Parse(ctx context.Context, in *ParseReq, opts ...grpc.CallOption) (*ParseResp, error) {
 	out := new(ParseResp)
-	err := c.cc.Invoke(ctx, App_Parse_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, General_Parse_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// AppServer is the server API for App service.
-// All implementations must embed UnimplementedAppServer
+// GeneralServer is the server API for General service.
+// All implementations must embed UnimplementedGeneralServer
 // for forward compatibility
-type AppServer interface {
+type GeneralServer interface {
 	General(context.Context, *GeneralReq) (*GeneralResp, error)
 	Parse(context.Context, *ParseReq) (*ParseResp, error)
-	mustEmbedUnimplementedAppServer()
+	mustEmbedUnimplementedGeneralServer()
 }
 
-// UnimplementedAppServer must be embedded to have forward compatible implementations.
-type UnimplementedAppServer struct {
+// UnimplementedGeneralServer must be embedded to have forward compatible implementations.
+type UnimplementedGeneralServer struct {
 }
 
-func (UnimplementedAppServer) General(context.Context, *GeneralReq) (*GeneralResp, error) {
+func (UnimplementedGeneralServer) General(context.Context, *GeneralReq) (*GeneralResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method General not implemented")
 }
-func (UnimplementedAppServer) Parse(context.Context, *ParseReq) (*ParseResp, error) {
+func (UnimplementedGeneralServer) Parse(context.Context, *ParseReq) (*ParseResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Parse not implemented")
 }
-func (UnimplementedAppServer) mustEmbedUnimplementedAppServer() {}
+func (UnimplementedGeneralServer) mustEmbedUnimplementedGeneralServer() {}
 
-// UnsafeAppServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to AppServer will
+// UnsafeGeneralServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to GeneralServer will
 // result in compilation errors.
-type UnsafeAppServer interface {
-	mustEmbedUnimplementedAppServer()
+type UnsafeGeneralServer interface {
+	mustEmbedUnimplementedGeneralServer()
 }
 
-func RegisterAppServer(s grpc.ServiceRegistrar, srv AppServer) {
-	s.RegisterService(&App_ServiceDesc, srv)
+func RegisterGeneralServer(s grpc.ServiceRegistrar, srv GeneralServer) {
+	s.RegisterService(&General_ServiceDesc, srv)
 }
 
-func _App_General_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _General_General_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GeneralReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AppServer).General(ctx, in)
+		return srv.(GeneralServer).General(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: App_General_FullMethodName,
+		FullMethod: General_General_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AppServer).General(ctx, req.(*GeneralReq))
+		return srv.(GeneralServer).General(ctx, req.(*GeneralReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _App_Parse_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _General_Parse_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ParseReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AppServer).Parse(ctx, in)
+		return srv.(GeneralServer).Parse(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: App_Parse_FullMethodName,
+		FullMethod: General_Parse_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AppServer).Parse(ctx, req.(*ParseReq))
+		return srv.(GeneralServer).Parse(ctx, req.(*ParseReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// App_ServiceDesc is the grpc.ServiceDesc for App service.
+// General_ServiceDesc is the grpc.ServiceDesc for General service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var App_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.general.v1.App",
-	HandlerType: (*AppServer)(nil),
+var General_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "api.general.v1.General",
+	HandlerType: (*GeneralServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "General",
-			Handler:    _App_General_Handler,
+			Handler:    _General_General_Handler,
 		},
 		{
 			MethodName: "Parse",
-			Handler:    _App_Parse_Handler,
+			Handler:    _General_Parse_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

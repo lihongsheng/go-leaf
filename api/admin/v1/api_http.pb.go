@@ -19,68 +19,24 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationAppCategory = "/api.admin.v1.App/Category"
-const OperationAppGetHost = "/api.admin.v1.App/GetHost"
-const OperationAppLogin = "/api.admin.v1.App/Login"
+const OperationAdminGetHost = "/api.admin.v1.Admin/GetHost"
 
-type AppHTTPServer interface {
-	Category(context.Context, *CategoryReq) (*CategoryResp, error)
+type AdminHTTPServer interface {
 	GetHost(context.Context, *GetHostReq) (*GetHostResp, error)
-	Login(context.Context, *LoginReq) (*LoginResp, error)
 }
 
-func RegisterAppHTTPServer(s *http.Server, srv AppHTTPServer) {
+func RegisterAdminHTTPServer(s *http.Server, srv AdminHTTPServer) {
 	r := s.Route("/")
-	r.GET("/v1/login", _App_Login0_HTTP_Handler(srv))
-	r.GET("/v1/category", _App_Category0_HTTP_Handler(srv))
-	r.GET("/v1/get_host", _App_GetHost0_HTTP_Handler(srv))
+	r.GET("/v1/host/list", _Admin_GetHost0_HTTP_Handler(srv))
 }
 
-func _App_Login0_HTTP_Handler(srv AppHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in LoginReq
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationAppLogin)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Login(ctx, req.(*LoginReq))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*LoginResp)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _App_Category0_HTTP_Handler(srv AppHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in CategoryReq
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationAppCategory)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Category(ctx, req.(*CategoryReq))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*CategoryResp)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _App_GetHost0_HTTP_Handler(srv AppHTTPServer) func(ctx http.Context) error {
+func _Admin_GetHost0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GetHostReq
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationAppGetHost)
+		http.SetOperation(ctx, OperationAdminGetHost)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.GetHost(ctx, req.(*GetHostReq))
 		})
@@ -93,51 +49,23 @@ func _App_GetHost0_HTTP_Handler(srv AppHTTPServer) func(ctx http.Context) error 
 	}
 }
 
-type AppHTTPClient interface {
-	Category(ctx context.Context, req *CategoryReq, opts ...http.CallOption) (rsp *CategoryResp, err error)
+type AdminHTTPClient interface {
 	GetHost(ctx context.Context, req *GetHostReq, opts ...http.CallOption) (rsp *GetHostResp, err error)
-	Login(ctx context.Context, req *LoginReq, opts ...http.CallOption) (rsp *LoginResp, err error)
 }
 
-type AppHTTPClientImpl struct {
+type AdminHTTPClientImpl struct {
 	cc *http.Client
 }
 
-func NewAppHTTPClient(client *http.Client) AppHTTPClient {
-	return &AppHTTPClientImpl{client}
+func NewAdminHTTPClient(client *http.Client) AdminHTTPClient {
+	return &AdminHTTPClientImpl{client}
 }
 
-func (c *AppHTTPClientImpl) Category(ctx context.Context, in *CategoryReq, opts ...http.CallOption) (*CategoryResp, error) {
-	var out CategoryResp
-	pattern := "/v1/category"
-	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationAppCategory))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, err
-}
-
-func (c *AppHTTPClientImpl) GetHost(ctx context.Context, in *GetHostReq, opts ...http.CallOption) (*GetHostResp, error) {
+func (c *AdminHTTPClientImpl) GetHost(ctx context.Context, in *GetHostReq, opts ...http.CallOption) (*GetHostResp, error) {
 	var out GetHostResp
-	pattern := "/v1/get_host"
+	pattern := "/v1/host/list"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationAppGetHost))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, err
-}
-
-func (c *AppHTTPClientImpl) Login(ctx context.Context, in *LoginReq, opts ...http.CallOption) (*LoginResp, error) {
-	var out LoginResp
-	pattern := "/v1/login"
-	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationAppLogin))
+	opts = append(opts, http.Operation(OperationAdminGetHost))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

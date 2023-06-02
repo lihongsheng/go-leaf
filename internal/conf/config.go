@@ -10,7 +10,7 @@ const (
 
 type Conf struct {
 	// etcd的地址
-	Etcd string `json:"etcd"`
+	EtcdAdds []string `json:"etcd_adds"`
 	// 是否强依赖时钟
 	Server    Server    `json:"server"`
 	JaegerUrl string    `json:"jaeger_url"`
@@ -18,6 +18,12 @@ type Conf struct {
 	Log       Log       `json:"log"`
 	Snowflake Snowflake `json:"snowflake"`
 	Pprof     string    `json:"pprof"`
+	Auth      Auth      `json:"auth"`
+}
+
+type Auth struct {
+	User string `json:"user"`
+	Pwd  string `json:"pwd"`
 }
 
 type Snowflake struct {
@@ -33,7 +39,7 @@ type Snowflake struct {
 	// 数据中心标志位的长度
 	DataLen int `json:"data_len"`
 	// 步长标志位的长度
-	SqpLen int `json:"sqp_len"`
+	SepLen int `json:"sep_len"`
 	// 开始时间微妙数
 	StartTime int64 `json:"start_time"`
 }

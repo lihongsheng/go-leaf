@@ -19,27 +19,27 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationAppGeneral = "/api.general.v1.App/General"
-const OperationAppParse = "/api.general.v1.App/Parse"
+const OperationGeneralGeneral = "/api.general.v1.General/General"
+const OperationGeneralParse = "/api.general.v1.General/Parse"
 
-type AppHTTPServer interface {
+type GeneralHTTPServer interface {
 	General(context.Context, *GeneralReq) (*GeneralResp, error)
 	Parse(context.Context, *ParseReq) (*ParseResp, error)
 }
 
-func RegisterAppHTTPServer(s *http.Server, srv AppHTTPServer) {
+func RegisterGeneralHTTPServer(s *http.Server, srv GeneralHTTPServer) {
 	r := s.Route("/")
-	r.GET("/v1/general", _App_General0_HTTP_Handler(srv))
-	r.GET("/v1/parse", _App_Parse0_HTTP_Handler(srv))
+	r.GET("/v1/general", _General_General0_HTTP_Handler(srv))
+	r.GET("/v1/parse", _General_Parse0_HTTP_Handler(srv))
 }
 
-func _App_General0_HTTP_Handler(srv AppHTTPServer) func(ctx http.Context) error {
+func _General_General0_HTTP_Handler(srv GeneralHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GeneralReq
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationAppGeneral)
+		http.SetOperation(ctx, OperationGeneralGeneral)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.General(ctx, req.(*GeneralReq))
 		})
@@ -52,13 +52,13 @@ func _App_General0_HTTP_Handler(srv AppHTTPServer) func(ctx http.Context) error 
 	}
 }
 
-func _App_Parse0_HTTP_Handler(srv AppHTTPServer) func(ctx http.Context) error {
+func _General_Parse0_HTTP_Handler(srv GeneralHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in ParseReq
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationAppParse)
+		http.SetOperation(ctx, OperationGeneralParse)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.Parse(ctx, req.(*ParseReq))
 		})
@@ -71,24 +71,24 @@ func _App_Parse0_HTTP_Handler(srv AppHTTPServer) func(ctx http.Context) error {
 	}
 }
 
-type AppHTTPClient interface {
+type GeneralHTTPClient interface {
 	General(ctx context.Context, req *GeneralReq, opts ...http.CallOption) (rsp *GeneralResp, err error)
 	Parse(ctx context.Context, req *ParseReq, opts ...http.CallOption) (rsp *ParseResp, err error)
 }
 
-type AppHTTPClientImpl struct {
+type GeneralHTTPClientImpl struct {
 	cc *http.Client
 }
 
-func NewAppHTTPClient(client *http.Client) AppHTTPClient {
-	return &AppHTTPClientImpl{client}
+func NewGeneralHTTPClient(client *http.Client) GeneralHTTPClient {
+	return &GeneralHTTPClientImpl{client}
 }
 
-func (c *AppHTTPClientImpl) General(ctx context.Context, in *GeneralReq, opts ...http.CallOption) (*GeneralResp, error) {
+func (c *GeneralHTTPClientImpl) General(ctx context.Context, in *GeneralReq, opts ...http.CallOption) (*GeneralResp, error) {
 	var out GeneralResp
 	pattern := "/v1/general"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationAppGeneral))
+	opts = append(opts, http.Operation(OperationGeneralGeneral))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -97,11 +97,11 @@ func (c *AppHTTPClientImpl) General(ctx context.Context, in *GeneralReq, opts ..
 	return &out, err
 }
 
-func (c *AppHTTPClientImpl) Parse(ctx context.Context, in *ParseReq, opts ...http.CallOption) (*ParseResp, error) {
+func (c *GeneralHTTPClientImpl) Parse(ctx context.Context, in *ParseReq, opts ...http.CallOption) (*ParseResp, error) {
 	var out ParseResp
 	pattern := "/v1/parse"
 	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationAppParse))
+	opts = append(opts, http.Operation(OperationGeneralParse))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

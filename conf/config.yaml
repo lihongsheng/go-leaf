@@ -1,0 +1,19 @@
+server:
+  http_port: 9090
+  grpc_port: 9091
+  time_out: 1s
+  name: "go-leaf"
+  version: "1.0.0"
+
+etcd_adds:
+  - "etcd:2379"
+
+jaeger_url: ""
+
+snowflake:
+  mode: 2
+  wait_time: 0.05s
+  data_len: 10
+  sep_len: 12
+  start_time: 1685610459654
+

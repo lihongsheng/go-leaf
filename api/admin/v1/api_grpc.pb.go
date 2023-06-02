@@ -19,163 +19,89 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	App_Login_FullMethodName    = "/api.admin.v1.App/Login"
-	App_Category_FullMethodName = "/api.admin.v1.App/Category"
-	App_GetHost_FullMethodName  = "/api.admin.v1.App/GetHost"
+	Admin_GetHost_FullMethodName = "/api.admin.v1.Admin/GetHost"
 )
 
-// AppClient is the client API for App service.
+// AdminClient is the client API for Admin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type AppClient interface {
-	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
-	Category(ctx context.Context, in *CategoryReq, opts ...grpc.CallOption) (*CategoryResp, error)
+type AdminClient interface {
 	GetHost(ctx context.Context, in *GetHostReq, opts ...grpc.CallOption) (*GetHostResp, error)
 }
 
-type appClient struct {
+type adminClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewAppClient(cc grpc.ClientConnInterface) AppClient {
-	return &appClient{cc}
+func NewAdminClient(cc grpc.ClientConnInterface) AdminClient {
+	return &adminClient{cc}
 }
 
-func (c *appClient) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
-	out := new(LoginResp)
-	err := c.cc.Invoke(ctx, App_Login_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *appClient) Category(ctx context.Context, in *CategoryReq, opts ...grpc.CallOption) (*CategoryResp, error) {
-	out := new(CategoryResp)
-	err := c.cc.Invoke(ctx, App_Category_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *appClient) GetHost(ctx context.Context, in *GetHostReq, opts ...grpc.CallOption) (*GetHostResp, error) {
+func (c *adminClient) GetHost(ctx context.Context, in *GetHostReq, opts ...grpc.CallOption) (*GetHostResp, error) {
 	out := new(GetHostResp)
-	err := c.cc.Invoke(ctx, App_GetHost_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Admin_GetHost_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// AppServer is the server API for App service.
-// All implementations must embed UnimplementedAppServer
+// AdminServer is the server API for Admin service.
+// All implementations must embed UnimplementedAdminServer
 // for forward compatibility
-type AppServer interface {
-	Login(context.Context, *LoginReq) (*LoginResp, error)
-	Category(context.Context, *CategoryReq) (*CategoryResp, error)
+type AdminServer interface {
 	GetHost(context.Context, *GetHostReq) (*GetHostResp, error)
-	mustEmbedUnimplementedAppServer()
+	mustEmbedUnimplementedAdminServer()
 }
 
-// UnimplementedAppServer must be embedded to have forward compatible implementations.
-type UnimplementedAppServer struct {
+// UnimplementedAdminServer must be embedded to have forward compatible implementations.
+type UnimplementedAdminServer struct {
 }
 
-func (UnimplementedAppServer) Login(context.Context, *LoginReq) (*LoginResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
-}
-func (UnimplementedAppServer) Category(context.Context, *CategoryReq) (*CategoryResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Category not implemented")
-}
-func (UnimplementedAppServer) GetHost(context.Context, *GetHostReq) (*GetHostResp, error) {
+func (UnimplementedAdminServer) GetHost(context.Context, *GetHostReq) (*GetHostResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHost not implemented")
 }
-func (UnimplementedAppServer) mustEmbedUnimplementedAppServer() {}
+func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
 
-// UnsafeAppServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to AppServer will
+// UnsafeAdminServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AdminServer will
 // result in compilation errors.
-type UnsafeAppServer interface {
-	mustEmbedUnimplementedAppServer()
+type UnsafeAdminServer interface {
+	mustEmbedUnimplementedAdminServer()
 }
 
-func RegisterAppServer(s grpc.ServiceRegistrar, srv AppServer) {
-	s.RegisterService(&App_ServiceDesc, srv)
+func RegisterAdminServer(s grpc.ServiceRegistrar, srv AdminServer) {
+	s.RegisterService(&Admin_ServiceDesc, srv)
 }
 
-func _App_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AppServer).Login(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: App_Login_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AppServer).Login(ctx, req.(*LoginReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _App_Category_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CategoryReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AppServer).Category(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: App_Category_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AppServer).Category(ctx, req.(*CategoryReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _App_GetHost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetHost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetHostReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AppServer).GetHost(ctx, in)
+		return srv.(AdminServer).GetHost(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: App_GetHost_FullMethodName,
+		FullMethod: Admin_GetHost_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AppServer).GetHost(ctx, req.(*GetHostReq))
+		return srv.(AdminServer).GetHost(ctx, req.(*GetHostReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// App_ServiceDesc is the grpc.ServiceDesc for App service.
+// Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var App_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.admin.v1.App",
-	HandlerType: (*AppServer)(nil),
+var Admin_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "api.admin.v1.Admin",
+	HandlerType: (*AdminServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Login",
-			Handler:    _App_Login_Handler,
-		},
-		{
-			MethodName: "Category",
-			Handler:    _App_Category_Handler,
-		},
-		{
 			MethodName: "GetHost",
-			Handler:    _App_GetHost_Handler,
+			Handler:    _Admin_GetHost_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

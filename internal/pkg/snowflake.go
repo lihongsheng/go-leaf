@@ -2,8 +2,7 @@ package pkg
 
 import (
 	"context"
-	"errors"
-	"fmt"
+	apiError "go-leaf/api/error"
 	"sync"
 	"time"
 )
@@ -55,15 +54,18 @@ type Snowflake struct {
 	wait               int
 }
 
-func NewSnowflake(nodeBits, stepBits uint8, node, epoch int64, mode Mode, maxWaitTime time.Duration, maxWait int) (*Snowflake, error) {
+func NewSnowflake(nodeBits, stepBits uint8, node, epoch int64, mode Mode, maxWaitTime time.Duration, maxWait int) (Generate, error) {
 	if (nodeBits + stepBits) > 22 {
-		return nil, errors.New(" you have a total 22 bits to share between Node/Step")
+		return nil, apiError.ErrorSystemInvalidConfError(" you have a total 22 bits to share between Node/Step")
 	}
 	if NodeBits < uint8(1) {
 		nodeBits = NodeBits
 	}
 	if StepBits < uint8(1) {
 		stepBits = StepBits
+	}
+	if node > (1<<nodeBits - 1) {
+		return nil, apiError.ErrorSystemInvalidConfError(" node[%d] is out maxNode[%d]", node, 1<<nodeBits-1)
 	}
 	if maxWaitTime < 1 {
 		maxWaitTime = 5 * time.Millisecond
@@ -91,7 +93,7 @@ func (s *Snowflake) Generate() (int64, error) {
 	if currentTime < s.lastTimestamp { // 时钟回滚
 		switch s.mode {
 		case ModeNormal: // 直接返回错，让客户端重试
-			return 0, errors.New(fmt.Sprintf("Clock moved backwards.  Refusing to generate id for %d milliseconds", s.lastTimestamp-currentTime))
+			return 0, apiError.ErrorSystemClockRollbackError("Clock moved backwards.  Refusing to generate id for %d milliseconds", s.lastTimestamp-currentTime)
 		case ModeWait: // 等待模式
 			currentTime, err = s.waitTimeMills(s.lastTimestamp)
 			if err != nil {
@@ -99,7 +101,6 @@ func (s *Snowflake) Generate() (int64, error) {
 			}
 		case ModeAuto: // 自增模式, 自动增加 lastTimestamp
 			s.step = (s.step + 1) & s.stepMax
-			fmt.Printf("****%d*****%d*****%d", s.step, currentTime, s.lastTimestamp)
 			if s.step == 0 {
 				currentTime = s.timeMills(currentTime)
 				currentTime = s.lastTimestamp + 1
@@ -123,7 +124,7 @@ func (s *Snowflake) Generate() (int64, error) {
 // if time out maxWaitTime return error.
 func (s *Snowflake) waitTimeMills(lastTime int64) (int64, error) {
 	if s.wait >= s.maxWait {
-		return 0, errors.New(fmt.Sprintf("exceed maxWait %d", s.maxWait))
+		return 0, apiError.ErrorSystemClockRollbackError("exceed maxWait %d", s.maxWait)
 	}
 	s.wait++
 	ctx, cancel := context.WithTimeout(context.Background(), s.maxWaitTime)
@@ -132,7 +133,7 @@ func (s *Snowflake) waitTimeMills(lastTime int64) (int64, error) {
 	for {
 		select {
 		case <-ctx.Done():
-			return 0, errors.New("wait time out")
+			return 0, apiError.ErrorSystemClockRollbackError("wait time out")
 		default:
 			currentTime = time.Now().UnixMilli()
 			if currentTime > lastTime {

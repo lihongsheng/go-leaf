@@ -6,23 +6,11 @@ info:
     title: ""
     version: 0.0.1
 paths:
-    /v1/category:
-        get:
-            tags:
-                - App
-            operationId: App_Category
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/api.admin.v1.CategoryResp'
     /v1/general:
         get:
             tags:
-                - App
-            operationId: App_General
+                - General
+            operationId: General_General
             responses:
                 "200":
                     description: OK
@@ -30,11 +18,11 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.general.v1.GeneralResp'
-    /v1/get_host:
+    /v1/host/list:
         get:
             tags:
-                - App
-            operationId: App_GetHost
+                - Admin
+            operationId: Admin_GetHost
             responses:
                 "200":
                     description: OK
@@ -42,32 +30,11 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.admin.v1.GetHostResp'
-    /v1/login:
-        get:
-            tags:
-                - App
-            operationId: App_Login
-            parameters:
-                - name: userName
-                  in: query
-                  schema:
-                    type: string
-                - name: password
-                  in: query
-                  schema:
-                    type: string
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/api.admin.v1.LoginResp'
     /v1/parse:
         get:
             tags:
-                - App
-            operationId: App_Parse
+                - General
+            operationId: General_Parse
             parameters:
                 - name: generalId
                   in: query
@@ -83,32 +50,6 @@ paths:
                                 $ref: '#/components/schemas/api.general.v1.ParseResp'
 components:
     schemas:
-        api.admin.v1.Category:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: int64
-                name:
-                    type: string
-                path:
-                    type: string
-                display:
-                    type: boolean
-                child:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/api.admin.v1.Category'
-        api.admin.v1.CategoryResp:
-            type: object
-            properties:
-                code:
-                    type: integer
-                    format: uint32
-                message:
-                    type: string
-                data:
-                    $ref: '#/components/schemas/api.admin.v1.Category'
         api.admin.v1.GetHostResp:
             type: object
             properties:
@@ -128,14 +69,12 @@ components:
                     type: string
                 status:
                     type: string
-        api.admin.v1.LoginResp:
-            type: object
-            properties:
-                code:
+                lastId:
                     type: integer
-                    format: uint32
-                message:
-                    type: string
+                    format: int64
+                lastTime:
+                    type: integer
+                    format: int64
         api.general.v1.GeneralResp:
             type: object
             properties:
@@ -172,5 +111,5 @@ components:
                 data:
                     $ref: '#/components/schemas/api.general.v1.InfoData'
 tags:
-    - name: App
-    - name: App
+    - name: Admin
+    - name: General

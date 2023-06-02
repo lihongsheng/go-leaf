@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  etcd:
+    image: 'bitnami/etcd:latest'
+    #restart: on-failure
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+    ports:
+      - 2379:2379
+      - 2380:2380
+    networks:
+      - leaf_network_message
+  consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: go-leaf
+    image: go-leaf:1.0.0
+    #restart: on-failure
+    networks:
+      - leaf_network_message
+    depends_on:
+      - etcd
+    volumes:
+      #- ./bin:/src/bin
+      - ./configs:/app/configs
+networks:
+  leaf_network_message:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+          gateway: 172.28.0.1
